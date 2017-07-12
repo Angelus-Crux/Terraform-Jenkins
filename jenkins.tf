@@ -18,7 +18,7 @@ resource "aws_instance" "jenkins" {
       type        = "ssh"
       user        = "ec2-user"
       agent       = "false"
-      private_key = "${file("${path.module}/provisioning/${var.ssh_private_key}")}"
+      private_key = "${file("${var.aws_key_path}")}"
     }
   }
 
@@ -29,7 +29,7 @@ resource "aws_instance" "jenkins" {
       type        = "ssh"
       user        = "ec2-user"
       agent       = "false"
-      private_key = "${file("${path.module}/provisioning/${var.ssh_private_key}")}"
+      private_key = "${file("${var.aws_key_path}")}"
     }
   }
   
@@ -40,7 +40,7 @@ resource "aws_instance" "jenkins" {
       type        = "ssh"
       user        = "ec2-user"
       agent       = "false"
-      private_key = "${file("${path.module}/provisioning/${var.ssh_private_key}")}"
+      private_key = "${file("${var.aws_key_path}")}"
     }
   }
 }

@@ -18,3 +18,6 @@ variable "key_name" {
 variable "ssh_private_key" {
   default = "AlexAWSTest.pem"
 }
+variable "aws_key_path" {
+  default = "provisioning/AlexAWSTest.pem"
+}
