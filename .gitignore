@@ -2,4 +2,5 @@ secret.tfvars
 *.tfstate
 *.tfstate.backup
 *.pem
+*.retry
 

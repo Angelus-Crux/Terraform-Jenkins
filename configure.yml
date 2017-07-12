@@ -1,0 +1,61 @@
+---
+- hosts: all
+  remote_user: ec2-user
+  become: yes
+
+  vars:
+    jenkins_version: 2.60
+  tasks:
+  - name: Install java 8
+    yum:
+      name: java-1.8.0-openjdk*
+      state: latest
+  - name: Install wget
+    yum:
+      name: wget
+      state: latest
+  - name: Install git
+    yum:
+      name: git
+      state: latest
+  - name: Download maven
+    get_url:
+      url: http://apache.mirrors.nublue.co.uk/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.tar.gz
+      dest: /opt/apache-maven-3.5.0-bin.tar.gz
+  - name: Create maven dir
+    file:
+      path: /opt/apache-maven-3.5.0
+      state: directory
+  - name: Extract maven
+    unarchive:
+      src: /opt/apache-maven-3.5.0-bin.tar.gz
+      dest: /opt
+      remote_src: yes
+  - name: Add maven path script
+    copy:
+      src: provisioning/mvnpath.sh
+      dest: /etc/profile.d/mvnpath.sh
+  - name: Make path script executable
+    file:
+      path: /etc/profile.d/mvnpath.sh
+      owner: root
+      group: root
+      mode: 644
+  - name: Set jenkins repo
+    yum_repository:
+      name: jenkins 
+      description: Jenkins YUM repo
+      baseurl: http://pkg.jenkins.io/redhat-stable 
+      gpgkey: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+      gpgcheck: yes
+  - name: Install jenkns
+    yum:
+      name: jenkins
+      state: latest
+    notify:
+    - restart jenkins
+  handlers:
+    - name: restart jenkins
+      service:
+        name: jenkins
+        state: restarted

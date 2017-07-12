@@ -10,38 +10,8 @@ resource "aws_instance" "jenkins" {
   vpc_security_group_ids = ["${var.security_group_id}"]
   key_name        = "${var.key_name}"
 
-  provisioner "file" {
-    source        = "provisioning/mvnpath.sh"
-    destination   = "/tmp/mvnpath.sh"
-
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      agent       = "false"
-      private_key = "${file("${var.aws_key_path}")}"
-    }
-  }
-
-  provisioner "remote-exec" {
-    script        = "provisioning/deploy.sh"
-
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      agent       = "false"
-      private_key = "${file("${var.aws_key_path}")}"
-    }
-  }
-  
-  provisioner "remote-exec" {
-    inline        = ["sudo service jenkins start"]
-
-    connection {
-      type        = "ssh"
-      user        = "ec2-user"
-      agent       = "false"
-      private_key = "${file("${var.aws_key_path}")}"
-    }
+  provisioner "local-exec" {
+    command       = "sleep 30;export ANSIBLE_HOST_KEY_CHECKING=False;ansible-playbook configure.yml -i '${aws_instance.jenkins.public_dns},' --private-key ${var.aws_key_path}"
   }
 }
 
